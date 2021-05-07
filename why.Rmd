@@ -1,0 +1,1113 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+install.packages("gRbase", dependencies=TRUE); 
+install.packages("gRain", dependencies=TRUE); 
+install.packages("gRim", dependencies=TRUE)
+#install.packages("https://www.bnlearn.com/releases/bnlearn_latest.tar.gz", repos = NULL, type = "source")
+#install.packages("bnlearn")
+#install.packages("deal")
+#install.packages("languageserver")
+#install.packages("BiocManager")
+#BiocManager::install("Rgraphviz")a
+#install.packages("gRain")
+#install.packages("xfun")
+```
+
+```{r}
+library(bnlearn)
+library(gRain)
+```
+
+```{r}
+data <- read.csv("C:/Users/Antonio franco/Documents/R/data.csv")
+```
+
+```{r}
+data <- data[complete.cases(data), ]
+data
+```
+
+
+```{r}
+myvars <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd", "ATPMetssynd")
+df <- data[myvars]
+str(df)
+```
+
+```{r}
+
+x =data.frame(data[,8])
+df[,8] = discretize(x, breaks = length(unique(data[,8])), method="interval")
+
+x = data.frame(data[,7])
+df[,7] = discretize(x, breaks = length(unique(data[,7])), method="interval")
+
+x = data.frame(data[,2])
+df[,2] = x#as.integer(data[,2]) #discretize(x,method = "interval", breaks = length(unique(data[,2])))
+
+#x = data.frame(data[,1])
+df[,1] = x#as.integer(data[,1])
+                    
+```
+
+```{r}
+str(df)
+```
+
+
+```{r}
+#install.packages(c("dynamicGraph","deal"))
+library(deal)
+```
+
+
+```{r}
+
+net = network(df)
+net
+```
+
+```{r}
+netc = network(data)
+netc
+```
+
+```{r}
+
+dataD <- read.csv("C:/Users/Antonio franco/Documents/R/dataD.csv")
+
+```
+
+```{r}
+dataD[1:2] <- lapply(dataD[1:2], as.numeric)
+```
+
+```{r}
+str(df_)
+```
+
+```{r}
+
+x =data.frame(dataD[,1])
+dataD[,1] = discretize(x, breaks = length(unique(dataD[,1])), method="interval")
+
+x = data.frame(dataD[,2])
+dataD[,2] = discretize(x, breaks = length(unique(dataD[,2])), method="interval")
+
+x =data.frame(dataD[,3])
+dataD[,3] = discretize(x, breaks = length(unique(dataD[,3])), method="interval")
+
+x = data.frame(dataD[,4])
+dataD[,4] = discretize(x, breaks = length(unique(dataD[,4])), method="interval")
+
+x =data.frame(dataD[,5])
+dataD[,5] = discretize(x, breaks = length(unique(dataD[,5])), method="interval")
+
+x = data.frame(dataD[,6])
+dataD[,6] = discretize(x, breaks = length(unique(dataD[,6])), method="interval")
+
+x =data.frame(dataD[,8])
+dataD[,8] = discretize(x, breaks = length(unique(dataD[,8])), method="interval")
+
+x = data.frame(dataD[,7])
+dataD[,7] = discretize(x, breaks = length(unique(dataD[,7])), method="interval")
+```
+```{r}
+str(dataD)
+```
+
+```{r}
+dataD$DBP
+```
+
+
+```{r}
+netD = network(dataD)
+netD
+```
+
+
+```{r}
+str(data[,8])
+```
+
+
+```{r}
+
+myvars <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd", "ATPMetssynd")
+dfu = data[myvars]
+
+x = data.frame(data[,1])
+dfu[,1] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,2])
+dfu[,2] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,3])
+dfu[,3] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,4])
+dfu[,4] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,5])
+dfu[,5] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,6])
+dfu[,6] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,8])
+dfu[,8] = discretize(x, breaks = 2, method="interval")
+
+x = data.frame(data[,7])
+dfu[,7] = discretize(x, breaks = 2, method="interval")
+```
+
+```{r}
+
+netx = network(dfu)
+netx
+```
+
+
+```{r}
+str(dfu$IDFMetsynd)
+```
+
+
+```{r}
+netDu = network(dfu)
+netDu
+```
+
+
+```{r}
+prior <- jointprior(net, N = 8)
+net <- learn(net, df, prior)$nw
+best <- autosearch(net, df, prior)
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+dag <- model2network(mstring)
+print(bnlearn::score(dag, data = df))
+print(bnlearn::score(dag, data = data))
+print(bnlearn::score(dag, data = dfu))
+print(bnlearn::score(dag, data = dataD))
+
+print(deal::score(best$nw, data = df))
+print(deal::score(best$nw, data = data))
+print(deal::score(best$nw, data = dfu))
+print(deal::score(best$nw, data = dataD))
+```
+
+```{r}
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+dag <- model2network(mstring)
+print(bnlearn::score(dag, data = df, by.node = TRUE))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(deal::score(best$nw, data = df))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+```
+
+
+
+```{r}
+dag <- rsmax2(df_)
+
+net = deal::network(df_[, bnlearn::node.ordering(dag)])
+# convert the bn object via its string representation.
+net = deal::as.network(bnlearn::modelstring(dag), net)
+
+print(bnlearn::score(dag, data = df, by.node = TRUE))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(deal::score(net, data = df))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+plot(dag)
+```
+
+
+```{r}
+str(df_)
+```
+
+
+```{r}
+bn.gs <- gs(df_)
+plot(bn.gs)
+```
+
+
+```{r}
+arcs = boot.strength(df_, algorithm = "gs")
+arcs[(arcs$strength > 0.85) & (arcs$direction >= 0.5), ]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+```{r}
+str(dataD)
+```
+
+
+```{r}
+updated = drop.arc(bn.gs, "DBP", "FastingBloodSugar")
+updated = drop.arc(updated, "ATPMetssynd", "IDFMetsynd")
+updated = set.arc(updated, "DBP", "SBP")
+updated = set.arc(updated, "FastingBloodSugar", "SBP")
+updated = set.arc(updated, "Triglycerides", "FastingBloodSugar")
+updated = set.arc(updated, "Triglycerides", "SBP")
+updated = set.arc(updated, "HDLcholestrol", "Triglycerides")
+updated = set.arc(updated, "LDLcholestrol", "HDLcholestrol")
+updated = set.arc(updated, "LDLcholestrol", "HDLcholestrol")
+plot(updated)
+
+print(bnlearn::score(updated, data = df, by.node = TRUE))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = df))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+1:7 1:8 Networks Hybrid
+
+
+```{r}
+myvars7 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd")
+df7 <- data[myvars7]
+
+
+myvars8 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "ATPMetssynd" )
+df8 <- data[myvars8]
+
+x =data[,8]
+df8[,7] = discretize(x, breaks = length(unique(data[,8])), method="interval")
+
+x = data[,7]
+df7[,7] = discretize(x, breaks = length(unique(data[,7])), method="interval")
+```
+
+
+```{r}
+myvars7 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd")
+dataD7 <- dataD[myvars7]
+
+
+myvars8 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "ATPMetssynd" )
+dataD8 <- dataD[myvars8]
+```
+
+
+```{r}
+myvars7 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd")
+data7 <- data[myvars7]
+
+
+myvars8 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "ATPMetssynd" )
+data8 <- data[myvars8]
+```
+
+
+```{r}
+myvars7 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd")
+dfu7 <- dfu[myvars7]
+
+
+myvars8 <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "ATPMetssynd" )
+dfu8 <- dfu[myvars8]
+```
+
+
+
+```{r}
+net7 = network(df7)
+net7
+```
+
+```{r}
+prior <- jointprior(net7, N = 7)
+net7 <- learn(net7, df7, prior)$nw
+best <- autosearch(net7, df7, prior)
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+
+```
+
+```{r}
+
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+dag <- model2network(mstring)
+print(bnlearn::score(dag, data = df7, by.node = TRUE))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu7, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD7, by.node = TRUE))
+```
+
+```{r}
+net8 = network(df8)
+net8
+prior <- jointprior(net8, N = 7)
+net8 <- learn(net8, df8, prior)$nw
+best <- autosearch(net8, df8, prior)
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+```
+
+```{r}
+mstring <- deal::modelstring(best$nw)
+
+plot(best$nw)
+print(mstring)
+dag <- model2network(mstring)
+print(bnlearn::score(dag, data = df8, by.node = TRUE))
+cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu8, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD8, by.node = TRUE))
+```
+
+
+Delete
+
+```{r}
+str(data)
+```
+
+
+```{r}
+dag <- hc(data)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(dag, data = dfu ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+
+plot(dag)
+```
+
+
+```{r}
+str(dataD)
+```
+
+
+```{r}
+dag <- rsmax2(data)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(dag, data = dfu))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+plot(dag)
+
+```
+
+```{r}
+fitted = bn.fit(dag, dataD)
+fitted$ATPMetssynd
+```
+
+
+
+```{r}
+cv.nb = bn.cv(dag, data = dataD, runs = 10, method = "k-fold", folds = 10,  loss = "pred",
+              loss.args = list(target = "ATPMetssynd"))
+cv.nb
+```
+
+
+
+```{r}
+bn.gs <- gs(data)
+plot(bn.gs)
+```
+
+
+```{r}
+arcs = boot.strength(data, algorithm = "gs")
+arcs[(arcs$strength > 0.85) & (arcs$direction >= 0.5), ]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+```{r}
+str(dfu)
+```
+
+
+```{r}
+updated = drop.arc(bn.gs, "ATPMetssynd", "Triglycerides")
+updated = drop.arc(updated, "HDLcholestrol", "DBP")
+updated = drop.arc(updated, "LDLcholestrol", "SBP")
+updated = drop.arc(updated, "FastingBloodSugar", "IDFMetsynd")
+updated = set.arc(updated, "Triglycerides", "IDFMetsynd")
+
+
+
+
+
+updated = set.arc(updated, "DBP", "SBP")
+updated = set.arc(updated, "DBP", "FastingBloodSugar")
+
+
+
+
+updated = set.arc(updated, "LDLcholestrol", "HDLcholestrol")
+updated = set.arc(updated, "IDFMetsynd", "ATPMetssynd")
+updated = set.arc(updated, "DBP", "LDLcholestrol")
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+```{r}
+str(dfu)
+```
+
+
+```{r}
+dag <- hc(dfu)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+plot(dag)
+```
+
+```{r}
+arcs = boot.strength(dfu, algorithm = "hc")
+arcs[ (arcs$direction >= 0.5), ]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+```{r}
+updated = set.arc(dag, "ATPMetssynd", "FastingBloodSugar")
+
+updated = set.arc(updated, "DBP", "LDLcholestrol")
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+
+```{r}
+dagx <- rsmax2(dfu)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dagx, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dagx, data = dataD, by.node = TRUE))
+plot(dag)
+```
+
+```{r}
+updated = set.arc(dagx, "FastingBloodSugar", "ATPMetssynd")
+
+updated = set.arc(updated, "DBP", "LDLcholestrol")
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+```{r}
+bn.gs <- gs(dfu)
+plot(bn.gs)
+```
+
+```{r}
+arcs = boot.strength(dfu, algorithm = "gs")
+arcs[(arcs$direction >= 0.5), ]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+
+```{r}
+
+
+updated = set.arc(bn.gs, "FastingBloodSugar", "SBP")
+updated = set.arc(updated, "LDLcholestrol", "Triglycerides")
+updated = set.arc(updated, "HDLcholestrol", "IDFMetsynd")
+updated = set.arc(updated, "DBP", "IDFMetsynd")
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+```{r}
+arcs = boot.strength(dfu, algorithm = "rsmax2")
+arcs[(arcs$direction >= 0.5), ]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+
+```{r}
+
+updated = set.arc(bn.gs, "ATPMetssynd", "Triglycerides")
+updated = set.arc(updated, "HDLcholestrol", "DBP")
+updated = set.arc(updated, "LDLcholestrol", "SBP")
+updated = set.arc(updated, "FastingBloodSugar", "IDFMetsynd")
+updated = set.arc(updated, "Triglycerides", "IDFMetsynd")
+
+
+
+
+
+updated = set.arc(updated, "DBP", "SBP")
+updated = set.arc(updated, "DBP", "FastingBloodSugar")
+
+
+
+
+updated = set.arc(updated, "LDLcholestrol", "HDLcholestrol")
+updated = set.arc(updated, "IDFMetsynd", "ATPMetssynd")
+updated = set.arc(updated, "DBP", "LDLcholestrol")
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+```{r}
+dataD$DBP
+```
+
+
+
+```{r}
+dag <- hc(dataD)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(dag, data = dfu ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+plot(dag)
+```
+
+
+```{r}
+dag <- rsmax2(dataD)
+
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(dag, data = dfu))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD))
+plot(dag)
+```
+
+
+
+```{r}
+bn.gs <- gs(dataD)
+plot(bn.gs)
+```
+
+```{r}
+arcs = boot.strength(dataD, algorithm = "gs")
+arcs[(arcs$direction >= 0.5),]
+averaged.network(arcs)
+plot(averaged.network(arcs))
+```
+
+
+```{r}
+
+updated = drop.arc(bn.gs, "ATPMetssynd", "SBP")
+
+updated = set.arc(updated, "SBP", "IDFMetsynd")
+
+
+updated = set.arc(updated, "Triglycerides", "LDLcholestrol")
+
+updated = drop.arc(updated, "HDLcholestrol", "LDLcholestrol")
+updated = set.arc(updated, "HDLcholestrol", "Triglycerides")
+
+
+plot(updated)
+
+#print(bnlearn::score(updated, data = df, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD, by.node = TRUE))
+cat("\n \n")
+print(bnlearn::score(updated, data = dfu))
+cat("\n \n")
+print(bnlearn::score(updated, data = dataD))
+#updated
+#updated = drop.edge(res, "A", "B")
+#updated
+#updated = reverse.arc(res, "A", "D")
+#updated
+```
+
+
+```{r}
+dag <- hc(dataD)
+#print(bnlearn::score(dag, data = df_, by.node = TRUE))
+#cat("\n \n")
+#print(bnlearn::score(dag, data = data, by.node = TRUE))
+#cat("\n \n")
+print(bnlearn::score(dag, data = dfu, by.node = TRUE ))
+cat("\n \n")
+print(bnlearn::score(dag, data = dataD, by.node = TRUE))
+plot(dag)
+```
+
+
+
+```{r}
+learned <- rsmax2(df_)
+plot(learned)
+bnlearn::score(learned, data = df_)
+```
+
+
+```{r}
+
+#bnlearn::score(bn.gs, data = df_)
+#directed(bn.gs)
+```
+
+```{r}
+
+```
+
+```{r}
+
+
+
+
+```
+
+
+
+```{r}
+fit
+```
+```{r}
+#install.packages("ROCR")
+library(ROCR)
+```
+
+```{r}
+#predicted = predict(fit, node = "IDFMetsynd", data = test)
+#xval = bn.cv(test, bn="hc", k=5,  node = "IDFMetsynd", fit.args = fit)
+df_test = data.frame(test)
+
+strength = boot.strength(test, algorithm = "hc")
+pred = bnlearn::as.prediction(strength, dag.deal)
+perf = performance(pred, "tpr", "fpr")
+```
+
+```{r}
+plot(perf, main = "Arc Detection")
+performance(pred, "auc")
+
+```
+
+
+
+
+```{r}
+myvars <- c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd", "ATPMetssynd")
+df_ <- data[myvars]
+str(df_)
+```
+```{r}
+heuristic = heuristic(best$nw, df, prior, restart = 2, trylist = best$trylist)
+```
+
+
+```{r}
+x =data.frame(data[,8])
+df_[,8] = discretize(x, breaks = length(unique(data[,8])))
+
+x = data.frame(data[,7])
+df_[,7] = discretize(x, breaks = length(unique(data[,7])))
+str(df_)
+```
+```{r}
+
+data
+
+```
+```{r}
+str(df_)
+```
+
+
+```{r}
+#detach("package:deal", unload=TRUE)
+library(bnlearn)
+#learned <- gs(df_)
+data(marks)
+n_rows = as.integer( 0.75*length(df[,1]))
+Train = df_[1:n_rows,]
+test = df_[-(1:n_rows),]
+bn.hc = hc(Train)
+
+bnlearn::score(bn.hc, data = Train)
+plot(bn.hc)
+```
+
+```{r}
+fitted_bn = bn.fit(bn.hc, data = Train)
+#predicted = predict(fitted, "C", )
+
+predicted = predict(fit, node = "IDFMetsynd", data = df_)
+predicted
+#attr(predicted, "prob")
+```
+
+```{r}
+graphviz.chart(fit)
+```
+
+```{r}
+cv.nb = bn.cv(dag.deal, data = df_, runs = 10, method = "k-fold", folds = 10,  loss = "pred-lw-cg",
+              loss.args = list(target = "IDFMetsynd"))
+cv.nb 
+```
+
+```{r}
+str(df_)
+```
+
+
+```{r}
+net = network(df)
+net
+```
+```{r}
+prior <- jointprior(net, N = 8)
+net <- learn(net, data, prior)$nw
+```
+```{r}
+
+best <- autosearch(net, data, prior)
+```
+
+
+```{r}
+arcs(ug) = matrix(
+ c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd"), ncol = 2, byrow = TRUE, dimnames = list(c(), c("from", "to")))
+```
+
+```{r}
+arcs(ug) = matrix( c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol", "IDFMetsynd", "ATPMetssynd"), ncol = 2, byrow = TRUE, dimnames = list(c(), c("from", "to")))
+```
+
+```{r}
+ug
+```
+
+.ordering(bn.gs)
+
+```{r}
+bn.gs = gs(data)
+bn.gs
+```
+
+```{r}
+all.equal(bn.gs, iamb(data))
+```
+
+```{r}
+ci.test("IDFMetsynd", "ATPMetssynd", c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcholestrol", "LDLcholestrol"), test = "x2", data = data)
+```
+
+
+```{r}
+deal.net = network(df)
+deal.net
+```
+
+```{r}
+learned <- aracne(data)
+plot(learned)
+score(learned, data = data, type = "bge")
+```
+
+```{r}
+learned <- mmhc(data)
+plot(learned)
+score(learned, data = data, type = "bic-g")
+```
+
+```{r}
+learned <- h2pc(data)
+plot(learned)
+score(learned, data = data, type = "bic-g")
+```
+
+```{r}
+learned <- rsmax2(data)
+plot(learned)
+score(learned, data = data, type = "bic-g")
+```
+
+```{r}
+data <- df[complete.cases(data), ]
+```
+
+```{r}
+directed.arcs(dag.iamb)
+```
+
+```{r}
+dag.iamb <- inter.iamb(df, test = "cor")
+narcs(dag.iamb)
+```
+
+```{r}
+rsmax2(data, restrict = "si.hiton.pc", test = "x2", maximize = "tabu", score = "bde", maximize.args = list(iss = 5))
+
+```
+
+```{r}
+bn.hc = hc(data)
+```
+
+```{r}
+bn.hc
+```
+
+```{r}
+bn.gs = gs(data)
+```
+
+```{r}
+score(bn.gs, data = data, type = "loglik-g")
+```
+
+```{r}
+score(bn.hc, data = data, type = "bge")
+```
+
+```{r}
+install.packages('deal')
+library(deal)
+```
+
+```{r}
+fitted = bn.fit(bn.hc, data=data)
+```
+
+```{r}
+fitted$IDFMetsynd
+```
+
+```{r}
+net = network(df)
+net
+```
+
+```{r}
+data =data.frame(data)
+
+```
+
+```{r}
+length(unique(data[,7]))
+```
+
+```{r}
+x =data.frame(data[,8])
+df[,8] = discretize(x, breaks = length(unique(data[,8]))
+
+x =data.frame(data[,7])
+df[,7] = discretize(x, breaks = length(unique(data[,7]))
+
+x =data.frame(data[,1])
+df[,1] = discretize(x, breaks = length(unique(data[,1]))
+
+x =data.frame(data[,2])
+df[,2] = discretize(x, breaks = length(unique(data[,2]))
+
+```
+
+```{r}
+data
+```
