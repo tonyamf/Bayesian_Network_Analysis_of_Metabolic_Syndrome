@@ -1,0 +1,34 @@
+# Understanding `results_ga_...csv` Files and Their Connection to the Research Paper
+
+Based on my analysis of the files, here is an explanation of the `results_ga_...csv` files and their relationship to the research paper.
+
+The `results_ga_...csv` files appear to be the output of experiments using a **Genetic Algorithm (GA)** to find the optimal structure for the Bayesian Network.
+
+Here’s a breakdown of what that means and how it connects to the paper:
+
+---
+
+## 1. What are these files?
+
+The "**ga**" in the filename stands for **Genetic Algorithm**. This is a type of search and optimization technique inspired by natural selection. In this context, it's used to search through the vast number of possible network structures to find the one that best represents the relationships in your `data.csv`.
+
+The numbers (e.g., **_9_2D**, **_11_10D**) likely represent different parameters used in the genetic algorithm experiments. For example:
+* **9** or **11** could refer to the number of variables (nodes) included in that particular experimental run.
+* **2D** or **10D** might refer to the number of dimensions or another parameter of the GA itself, like population size or the number of generations it was run for.
+
+The files with a trailing underscore (\_) (e.g., `results_ga_9_2D_.csv`) are likely results from a second, identical run of the same experiment to ensure the results are consistent.
+
+---
+
+## 2. How do they relate to the paper?
+
+While the research paper "Explorative Approach with Bayesian Networks for Metabolic Syndrome" doesn't explicitly mention "Genetic Algorithms," it does describe the category of methods that GAs fall into.
+
+In **Section II, "Approaches,"** the paper states:
+
+> Score-based structure learning algorithms (also known as search-and-score algorithms) represent the application of general heuristic optimization techniques to the problem of learning the structure of a Bayesian network.
+
+A **Genetic Algorithm** is a classic example of a **heuristic optimization technique**. The GA was likely used as one of the "score-based" methods to explore different network structures and find the one with the best score (i.e., the one that best fits the data).
+
+In summary, the `results_ga_...` files are the raw outputs from an experimental phase of the project where a Genetic Algorithm was used to perform score-based structure learning. The author likely used these results to inform the final model selection but chose to focus the paper's discussion on the broader categories of algorithms (score-based, constraint-based, hybrid) rather than the specifics of the GA implementation.
+```
