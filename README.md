@@ -46,7 +46,7 @@ Three different approaches for learning the network structure are implemented:
 - **Hybrid:** These algorithms combine elements of both score-based and constraint-based methods (e.g., RSMAX2).
 
 ## Code Structure and Usage
-The R code for this project is in the `why.Rmd` file. It includes the following steps:
+The R code for this project is in the `main_file.Rmd` file. It includes the following steps:
 1.  **Data Loading and Preprocessing:** The `data.csv` file is loaded, and missing values are removed.
 2.  **Data Discretization:** Both unsupervised and manual methods are used to discretize the data for multinomial and hybrid models.
 3.  **Model Building:** Various Bayesian network models are built using different structure learning algorithms.
