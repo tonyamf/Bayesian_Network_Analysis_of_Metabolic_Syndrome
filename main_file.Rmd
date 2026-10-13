@@ -17,15 +17,14 @@ When you save the notebook, an HTML file containing the code and output will be 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
 ```{r}
-install.packages("gRbase", dependencies=TRUE); 
-install.packages("gRain", dependencies=TRUE); 
-install.packages("gRim", dependencies=TRUE)
+# Install once (see README "How to run"):
+#install.packages(c("bnlearn", "deal", "gRbase", "gRain", "gRim", "ROCR"))
 #install.packages("https://www.bnlearn.com/releases/bnlearn_latest.tar.gz", repos = NULL, type = "source")
 #install.packages("bnlearn")
 #install.packages("deal")
 #install.packages("languageserver")
 #install.packages("BiocManager")
-#BiocManager::install("Rgraphviz")a
+#BiocManager::install("Rgraphviz")
 #install.packages("gRain")
 #install.packages("xfun")
 ```
@@ -36,7 +35,7 @@ library(gRain)
 ```
 
 ```{r}
-data <- read.csv("C:/Users/Antonio franco/Documents/R/data.csv")
+data <- read.csv("data.csv")
 ```
 
 ```{r}
@@ -91,7 +90,7 @@ netc
 
 ```{r}
 
-dataD <- read.csv("C:/Users/Antonio franco/Documents/R/dataD.csv")
+dataD <- read.csv("dataD.csv")
 
 ```
 
@@ -980,10 +979,8 @@ arcs(ug) = matrix( c("DBP", "SBP", "FastingBloodSugar", "Triglycerides", "HDLcho
 ```
 
 ```{r}
-ug
 ```
 
-.ordering(bn.gs)
 
 ```{r}
 bn.gs = gs(data)
@@ -1095,16 +1092,16 @@ length(unique(data[,7]))
 
 ```{r}
 x =data.frame(data[,8])
-df[,8] = discretize(x, breaks = length(unique(data[,8]))
+df[,8] = discretize(x, breaks = length(unique(data[,8])))
 
 x =data.frame(data[,7])
-df[,7] = discretize(x, breaks = length(unique(data[,7]))
+df[,7] = discretize(x, breaks = length(unique(data[,7])))
 
 x =data.frame(data[,1])
-df[,1] = discretize(x, breaks = length(unique(data[,1]))
+df[,1] = discretize(x, breaks = length(unique(data[,1])))
 
 x =data.frame(data[,2])
-df[,2] = discretize(x, breaks = length(unique(data[,2]))
+df[,2] = discretize(x, breaks = length(unique(data[,2])))
 
 ```
 
