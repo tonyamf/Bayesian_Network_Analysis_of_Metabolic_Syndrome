@@ -9,8 +9,8 @@ This repository contains the code and resources for the research paper "Explorat
   - [Bayesian Network Types](#bayesian-network-types)
   - [Structure Learning Algorithms](#structure-learning-algorithms)
 - [Code Structure and Usage](#code-structure-and-usage)
-- [Setup and Installation](#setup-and-installation)
-- [Corrections and Improvements](#corrections-and-improvements)
+- [How to run](#how-to-run)
+- [Data provenance and privacy](#data-provenance-and-privacy)
 - [Results](#results)
 - [Contributing](#contributing)
 - [License](#license)
@@ -46,31 +46,46 @@ Three different approaches for learning the network structure are implemented:
 - **Hybrid:** These algorithms combine elements of both score-based and constraint-based methods (e.g., RSMAX2).
 
 ## Code Structure and Usage
-The R code for this project is in the `main_file.Rmd` file. It includes the following steps:
+The R code is in `main_file.Rmd`; `preprocess.ipynb` (Python) discretises the data. The R notebook includes steps such as:
 1.  **Data Loading and Preprocessing:** The `data.csv` file is loaded, and missing values are removed.
 2.  **Data Discretization:** Both unsupervised and manual methods are used to discretize the data for multinomial and hybrid models.
 3.  **Model Building:** Various Bayesian network models are built using different structure learning algorithms.
 4.  **Model Evaluation:** The models are evaluated using scoring functions and k-fold cross-validation.
 
-## Setup and Installation
-To run the R code, you need to have R and RStudio installed. You will also need to install the following packages:
+## How to run
+Requirements: R >= 4.3 and the packages `bnlearn`, `deal`, `gRbase`, `gRain`, `gRim`, `ROCR` (plus `rmarkdown`/`knitr` to knit).
 ```r
-install.packages(c("bnlearn", "deal", "gRain", "gRbase", "gRim"))
+install.packages(c("bnlearn", "deal", "gRbase", "gRain", "gRim", "ROCR", "rmarkdown"))
 ```
-You will also need to have the `data.csv` file in the same directory as the R Markdown file.
+Run from the repository root (the CSV paths are relative):
+```sh
+Rscript -e 'rmarkdown::render("main_file.Rmd")'   # or open main_file.Rmd in RStudio and run chunk by chunk
+```
+`main_file.Rmd` is an exploratory notebook: it was written as a scratchpad, so some late chunks refer to objects
+that are never created in the file (for example `fit`, `dag.deal`). Knitting the whole file in one go is therefore
+expected to stop with an error in those chunks; this has not been verified because `bnlearn` could not be installed
+in the environment used for the last check.
 
-## Corrections and Improvements
+Python smoke test (no R needed): checks that `dataD.csv` is exactly `data.csv` discretised with the thresholds in `preprocess.ipynb`:
+```sh
+pip install -r requirements.txt
+python scripts/check_discretization.py .
+```
+`preprocess.ipynb` reads `data.xls`, the original source spreadsheet, which is **not** in this repository, so the notebook cannot be re-run as is.
+`data.csv` and `dataD.csv` are its outputs.
 
-The following improvements have been made to the original R code:
-1.  **File Paths:** The original code used hardcoded file paths. The corrected version assumes the data file is in the same directory as the script.
-2.  **Code Clarity:** Added comments to the code to explain the different steps and methodologies.
-3.  **Code Organization:** Removed unused code and organized the script to be more readable and maintainable.
+## Data provenance and privacy
+`data.csv` has 9,971 rows of clinical measurements (blood pressure, glucose, lipids, two syndrome labels) and no names or IDs.
+The repository does not say where the data came from or whether it is a public dataset. **Source: unknown. Treat as a possible
+privacy problem until the origin and licence are confirmed.**
 
 ## Results
-The analysis suggests that the hybrid-based learning structure for a Gaussian Bayesian Network, when fitted with manually discretized data, provides the most accurate and interpretable model of the relationships between the factors contributing to metabolic syndrome. The model achieves an accuracy of approximately 91% in predicting the `ATPMetssynd` diagnostic variable.
+No result numbers are stored in this repository (the notebook has no saved outputs). An earlier version of this README
+claimed about 91% accuracy for predicting `ATPMetssynd`; nothing in the repository supports that figure, so it was removed.
+Re-run the notebook to obtain results.
 
 ## Contributing
 Contributions to this project are welcome. Please feel free to open an issue or submit a pull request with any improvements or bug fixes.
 
 ## License
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+This project is licensed under the MIT License. (No `LICENSE` file is present in the repository yet.)

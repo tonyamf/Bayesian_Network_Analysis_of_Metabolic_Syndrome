@@ -1,0 +1,6 @@
+# Python (preprocess.ipynb and scripts/check_discretization.py) - versions that installed cleanly on Python 3.11
+pandas==3.0.6
+numpy==2.4.6
+xlrd  # only needed to read the original data.xls, which is not in the repo
+nbconvert==7.17.2
+ipykernel==7.4.0
